@@ -24,7 +24,7 @@ exports.handler = function(context, event) {
             context.callback('Saved');
         });
     }else{
-        throw "Connection doesn't estabilished!";
+        throw "Connection doesn't established!";
     }
 
 };
