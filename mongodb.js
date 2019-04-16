@@ -1,24 +1,30 @@
 var MongoClient = require('mongodb').MongoClient;
 const mongoUrl =process.env.db_url;
 const db_name=process.env.database;
+var connection;
+var dbInstance;
+MongoClient.connect(mongoUrl, function(err, db) {
+    if (err) {
+        context.callback(JSON.stringify(err));
+        throw err;
+    }
+    dbInstance = db; 
+    connection = db.db(db_name);
+});
 
 exports.handler = function(context, event) {
 
-    MongoClient.connect(mongoUrl, function(err, db) {
-        if (err) {
-            context.callback(JSON.stringify(err));
-            throw err;
-        }
-        var dbo = db.db(db_name);
+    if( connection && dbInstance){
         var myobj = { name: "Company Inc", address: "Highway 37" };
-        dbo.collection("customers").insertOne(myobj, function(err, res) {
+        connection.collection("customers").insertOne(myobj, function(err, res) {
             if (err) {
                 context.callback(JSON.stringify(err));
                 throw err;
             }
-            db.close();
             context.callback('Saved');
         });
-    });
+    }else{
+        throw "Connection doesn't estabilished!";
+    }
 
 };
